@@ -1,0 +1,15 @@
+{
+  "name": "Vocalculs",
+  "short_name": "Vocalculs",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "description": "App simple avec accès au micro",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
