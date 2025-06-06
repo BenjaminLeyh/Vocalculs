@@ -25,8 +25,9 @@ recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
     console.log("Vous avez dit :", transcript);
 
     const calcul = phraseEnCalcul(transcript);
+    console.log(calcul);
     const resultat = eval(calcul);
-    document.getElementById("output")!.innerText = resultat;
+    document.getElementById("output")!.innerText = `${transcript} ${resultat}`;
 };
 recognition.onerror = (event: any) => {
     console.error("Erreur de reconnaissance :", event.error);
@@ -41,13 +42,15 @@ function phraseEnCalcul(phrase: string): string {
     let i = 0;
 
     while (i < mots.length) {
+        document.getElementById("output")!.innerText = resultat;
+
         const mot = mots[i];
 
-        if (mot === "égal") {
+        if (mot === "=") {
             break;
         }
 
-        if (mot === "virgule") {
+        if (mot === ",") {
             // Récupérer la partie avant et concaténer avec les suivants
             resultat = resultat.trimEnd(); // enlever l’espace avant
             resultat += ".";
