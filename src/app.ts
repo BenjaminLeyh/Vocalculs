@@ -2,6 +2,7 @@ const SpeechRecognition = (window as any).SpeechRecognition || (window as any).w
 const recognition = new SpeechRecognition();
 recognition.lang = 'fr-FR';
 recognition.interimResults = false;
+const accepted = ["0","1","2","3","4","5","6","7","8","9","+","*","-","/","."];
 const motsVersChiffres: Record<string, string> = {
     "zéro": "0",
     "un": "1",
@@ -22,32 +23,39 @@ const motsVersChiffres: Record<string, string> = {
 };
 let resultat: number;
 let transcript: string;
-recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
-    transcript += `${resultat} ${event.results[0][0].transcript.trim()}`;
-    console.log("Vous avez dit :", transcript);
 
-    const calcul = phraseEnCalcul(transcript);
-    console.log(calcul);
+recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
+    transcript += `${resultat ? resultat + " " : "" }${event.results[0][0].transcript} `;
+    console.log("Vous avez dit :", transcript);
     document.getElementById("output")!.innerText = `${transcript}`;
-    if(transcript[transcript.length - 1] === "="){
-        resultat = eval(calcul);
-        document.getElementById("output")!.innerText = `${transcript} = ${resultat}`;
-    } else {
-        recognition.start();
-    }
 };
 recognition.onerror = (event: any) => {
     console.error("Erreur de reconnaissance :", event.error);
 };
 
 recognition.onend = () => {
-    console.log("Reconnaissance terminée");
+    const res = transcript.split(" ");
+    console.log(res);
+    const last = res[res.length - 1];
+    if(last === "stop") {
+        transcript = "";
+        resultat = 0;
+        return;
+    }
+    if (last === "=" || last == "égal") {
+        res.pop();
+        transcript.replace(",", ".");
+        const newValue = res.filter((value : string) => {
+            accepted.includes(value);
+        }).join(" ");
+        console.log("Formaté : ", newValue);
+        resultat = eval(newValue);
+        document.getElementById("output")!.innerText = `${transcript} = ${resultat}`;
+        console.log("Reconnaissance terminée");
+        transcript = "";
+    }
+    recognition.start();
 };
-function phraseEnCalcul(phrase: string): string {
-    phrase = phrase.replace("=", "");
-    phrase = phrase.replace(",", " ");
-    return phrase.trim();
-}
 function startMic(): void {
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream: MediaStream) => {
