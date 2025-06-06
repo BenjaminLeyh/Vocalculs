@@ -22,10 +22,10 @@ const motsVersChiffres = {
     "divisé": "/",
     "virgule": ".",
 };
-let resultat;
-let transcript;
+let resultat = 0;
+let transcript = "";
 recognition.onresult = (event) => {
-    transcript += `${resultat ? resultat + " " : ""}${event.results[0][0].transcript} `;
+    transcript += `${resultat ? resultat + " " : ""} ${event.results[0][0].transcript}`;
     console.log("Vous avez dit :", transcript);
     document.getElementById("output").innerText = `${transcript}`;
 };
@@ -42,14 +42,20 @@ recognition.onend = () => {
         return;
     }
     if (last === "=" || last == "égal") {
-        res.pop();
+        console.log(res);
         transcript.replace(",", ".");
         const newValue = res.filter((value) => {
-            accepted.includes(value);
-        }).join(" ");
+            console.log(value);
+            for (let i = 0; i < value.length; i++) {
+                if (!accepted.includes(value)) {
+                    return false;
+                }
+            }
+            return true;
+        }).join(" ").trim();
         console.log("Formaté : ", newValue);
         resultat = eval(newValue);
-        document.getElementById("output").innerText = `${transcript} = ${resultat}`;
+        document.getElementById("output").innerText = `${newValue} = ${resultat}`;
         console.log("Reconnaissance terminée");
         transcript = "";
     }
