@@ -20,14 +20,21 @@ const motsVersChiffres: Record<string, string> = {
     "divisé": "/",
     "virgule": ".",
 };
+let resultat: number;
+let transcript: string;
 recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
-    const transcript = event.results[0][0].transcript;
+    transcript += `${resultat} ${event.results[0][0].transcript.trim()}`;
     console.log("Vous avez dit :", transcript);
 
     const calcul = phraseEnCalcul(transcript);
     console.log(calcul);
-    const resultat = eval(calcul);
-    document.getElementById("output")!.innerText = `${transcript} ${resultat}`;
+    document.getElementById("output")!.innerText = `${transcript}`;
+    if(transcript[transcript.length - 1] === "="){
+        resultat = eval(calcul);
+        document.getElementById("output")!.innerText = `${transcript} = ${resultat}`;
+    } else {
+        recognition.start();
+    }
 };
 recognition.onerror = (event: any) => {
     console.error("Erreur de reconnaissance :", event.error);
@@ -37,43 +44,9 @@ recognition.onend = () => {
     console.log("Reconnaissance terminée");
 };
 function phraseEnCalcul(phrase: string): string {
-    const mots = phrase.toLowerCase().split(" ");
-    let resultat = "";
-    let i = 0;
-
-    while (i < mots.length) {
-        document.getElementById("output")!.innerText = resultat;
-
-        const mot = mots[i];
-
-        if (mot === "=") {
-            break;
-        }
-
-        if (mot === ",") {
-            // Récupérer la partie avant et concaténer avec les suivants
-            resultat = resultat.trimEnd(); // enlever l’espace avant
-            resultat += ".";
-
-            // Ajouter les chiffres suivants
-            i++;
-            while (i < mots.length && motsVersChiffres[mots[i]]) {
-                resultat += motsVersChiffres[mots[i]];
-                i++;
-            }
-            resultat += " ";
-            continue;
-        }
-
-        const conversion = motsVersChiffres[mot];
-        if (conversion) {
-            resultat += conversion + " ";
-        }
-
-        i++;
-    }
-
-    return resultat.trim();
+    phrase = phrase.replace("=", "");
+    phrase = phrase.replace(",", " ");
+    return phrase.trim();
 }
 function startMic(): void {
     navigator.mediaDevices.getUserMedia({ audio: true })
