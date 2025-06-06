@@ -1,20 +1,3 @@
-function startMic(): void {
-    navigator.mediaDevices.getUserMedia({ audio: true })
-        .then((stream: MediaStream) => {
-            const statusEl = document.getElementById("status");
-            if (statusEl instanceof HTMLElement) {
-                statusEl.innerText = "Micro activé 🎙️";
-            }
-
-            // 🎛️ Optionnel : traitement du flux audio ici (ex: analyseur, enregistrement, etc.)
-        })
-        .catch((err: Error) => {
-            const statusEl = document.getElementById("status");
-            if (statusEl instanceof HTMLElement) {
-                statusEl.innerText = "Erreur : " + err.message;
-            }
-        });
-}
 const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 recognition.lang = 'fr-FR';
@@ -36,6 +19,21 @@ const motsVersChiffres: Record<string, string> = {
     "multiplié": "*",
     "divisé": "/",
     "virgule": ".",
+};
+recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
+    const transcript = event.results[0][0].transcript;
+    console.log("Vous avez dit :", transcript);
+
+    const calcul = phraseEnCalcul(transcript);
+    const resultat = eval(calcul);
+    document.getElementById("output")!.innerText = resultat;
+};
+recognition.onerror = (event: any) => {
+    console.error("Erreur de reconnaissance :", event.error);
+};
+
+recognition.onend = () => {
+    console.log("Reconnaissance terminée");
 };
 function phraseEnCalcul(phrase: string): string {
     const mots = phrase.toLowerCase().split(" ");
@@ -73,4 +71,21 @@ function phraseEnCalcul(phrase: string): string {
     }
 
     return resultat.trim();
+}
+function startMic(): void {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then((stream: MediaStream) => {
+            const statusEl = document.getElementById("status");
+            if (statusEl instanceof HTMLElement) {
+                statusEl.innerText = "Micro activé 🎙️";
+            }
+            recognition.start();
+            // 🎛️ Optionnel : traitement du flux audio ici (ex: analyseur, enregistrement, etc.)
+        })
+        .catch((err: Error) => {
+            const statusEl = document.getElementById("status");
+            if (statusEl instanceof HTMLElement) {
+                statusEl.innerText = "Erreur : " + err.message;
+            }
+        });
 }
