@@ -21,12 +21,21 @@ const motsVersChiffres = {
     "divisé": "/",
     "virgule": ".",
 };
+let resultat;
+let transcript;
 recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
+    transcript += `${resultat} ${event.results[0][0].transcript.trim()}`;
     console.log("Vous avez dit :", transcript);
     const calcul = phraseEnCalcul(transcript);
-    const resultat = eval(calcul);
-    document.getElementById("output").innerText = resultat;
+    console.log(calcul);
+    document.getElementById("output").innerText = `${transcript}`;
+    if (transcript[transcript.length - 1] === "=") {
+        resultat = eval(calcul);
+        document.getElementById("output").innerText = `${transcript} = ${resultat}`;
+    }
+    else {
+        recognition.start();
+    }
 };
 recognition.onerror = (event) => {
     console.error("Erreur de reconnaissance :", event.error);
@@ -35,34 +44,9 @@ recognition.onend = () => {
     console.log("Reconnaissance terminée");
 };
 function phraseEnCalcul(phrase) {
-    const mots = phrase.toLowerCase().split(" ");
-    let resultat = "";
-    let i = 0;
-    while (i < mots.length) {
-        const mot = mots[i];
-        if (mot === "égal") {
-            break;
-        }
-        if (mot === "virgule") {
-            // Récupérer la partie avant et concaténer avec les suivants
-            resultat = resultat.trimEnd(); // enlever l’espace avant
-            resultat += ".";
-            // Ajouter les chiffres suivants
-            i++;
-            while (i < mots.length && motsVersChiffres[mots[i]]) {
-                resultat += motsVersChiffres[mots[i]];
-                i++;
-            }
-            resultat += " ";
-            continue;
-        }
-        const conversion = motsVersChiffres[mot];
-        if (conversion) {
-            resultat += conversion + " ";
-        }
-        i++;
-    }
-    return resultat.trim();
+    phrase = phrase.replace("=", "");
+    phrase = phrase.replace(",", " ");
+    return phrase.trim();
 }
 function startMic() {
     navigator.mediaDevices.getUserMedia({ audio: true })
