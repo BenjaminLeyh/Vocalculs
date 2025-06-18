@@ -2,7 +2,6 @@ const SpeechRecognition = (window as any).SpeechRecognition || (window as any).w
 const recognition = new SpeechRecognition();
 recognition.lang = 'fr-FR';
 recognition.interimResults = false;
-recognition.continuous = true;
 const specialWord = "total"
 const next = "suivant"
 const motsVersChiffres: Record<string, string> = {
@@ -33,6 +32,8 @@ const motsVersChiffres: Record<string, string> = {
 let result: number = 0;
 let transcript: string = "";
 let stopping = false;
+let totalFrom: number;
+let totalTo: number;
 
 const startButton = document.getElementById("start")
 const stopButton = document.getElementById("stop")
@@ -61,46 +62,27 @@ function formatText(text: any) {
     }).join(" ");
 }
 
-recognition.onspeechend = () => {
-        recognition.start();
-        recognition.stop(); // forcer Safari à "réinitialiser" le micro
-};
-
-recognition.onresult = (event: {
-    resultIndex: number;
-    results: SpeechRecognitionResultList;
-}) => {
+recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
     try {
-        let finalTranscript = '';
+        let newTranscript = event.results[0][0].transcript
 
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-            const res = event.results[i][0];
-            const transcriptPart = res.transcript.trim();
+        const partsForTotal = newTranscript.split(specialWord);
+        console.log("special", partsForTotal)
 
-            if (event.results[i].isFinal) {
-                finalTranscript += transcriptPart + " ";
-            } else {
-                console.log(transcriptPart);
-                // Optionnel : tu peux afficher le transcript en direct ici
-                // transcriptElement!.innerText = transcript + transcriptPart;
+        let formattedText = formatText(partsForTotal[0]) + " ";
+        setResult(eval(`${result || ""} ${formattedText}`));
+        setTranscript(transcript + formattedText);
+        if(partsForTotal.length > 1) {
+            if(partsForTotal[1].length > 0) {
+                const parts = partsForTotal[1].split(" ").map((part: string) => { return formatPart(part) }).filter((part: string) => part !== "");
+                totalFrom = parts[0];
+                totalTo = parts[1];
             }
-        }
-
-        if (finalTranscript.trim()) {
-            const specialOppParts = finalTranscript.split(specialWord);
-
-            let formattedText = formatText(specialOppParts[0]) + " ";
-            setResult(eval(`${result === 0 ? "" : result} ${formattedText}`));
-            setTranscript(transcript + formattedText);
-
-            if (specialOppParts.length > 1) {
-                const parts = specialOppParts[1].split(" ").map(formatPart).filter(p => p !== "");
-                const from = Number(parts[0]);
-                const to = Number(parts[1]);
-                if (!isNaN(from) && !isNaN(to)) {
-                    setTotal(`Total sur ${to} : ${(result / from * to).toString()}`);
-                }
+            if(!totalFrom || !totalTo){
+                setTotal("Veuillez donner le total de départ et le total attendu")
+                return;
             }
+            setTotal(`Total sur ${totalTo} : ${Math.round((result / totalFrom * totalTo) * 100) / 100}`)
         }
     } catch (e) {
         console.error("Erreur lors de l'évaluation de la transcription : ", e);
@@ -116,8 +98,6 @@ recognition.onend = () => {
         setTimeout(() => {
             recognition.start();
         }, 200);
-    } else {
-        recognition.stop();
     }
 };
 

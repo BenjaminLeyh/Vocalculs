@@ -3,7 +3,6 @@ const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogni
 const recognition = new SpeechRecognition();
 recognition.lang = 'fr-FR';
 recognition.interimResults = false;
-recognition.continuous = true;
 const specialWord = "total";
 const next = "suivant";
 const motsVersChiffres = {
@@ -34,6 +33,8 @@ const motsVersChiffres = {
 let result = 0;
 let transcript = "";
 let stopping = false;
+let totalFrom;
+let totalTo;
 const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
 const transcriptElement = document.getElementById("transcript");
@@ -56,38 +57,25 @@ function formatText(text) {
         return formatPart(part);
     }).join(" ");
 }
-recognition.onspeechend = () => {
-    recognition.start();
-    recognition.stop(); // forcer Safari à "réinitialiser" le micro
-};
 recognition.onresult = (event) => {
     try {
-        let finalTranscript = '';
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-            const res = event.results[i][0];
-            const transcriptPart = res.transcript.trim();
-            if (event.results[i].isFinal) {
-                finalTranscript += transcriptPart + " ";
+        let newTranscript = event.results[0][0].transcript;
+        const partsForTotal = newTranscript.split(specialWord);
+        console.log("special", partsForTotal);
+        let formattedText = formatText(partsForTotal[0]) + " ";
+        setResult(eval(`${result || ""} ${formattedText}`));
+        setTranscript(transcript + formattedText);
+        if (partsForTotal.length > 1) {
+            if (partsForTotal[1].length > 0) {
+                const parts = partsForTotal[1].split(" ").map((part) => { return formatPart(part); }).filter((part) => part !== "");
+                totalFrom = parts[0];
+                totalTo = parts[1];
             }
-            else {
-                console.log(transcriptPart);
-                // Optionnel : tu peux afficher le transcript en direct ici
-                // transcriptElement!.innerText = transcript + transcriptPart;
+            if (!totalFrom || !totalTo) {
+                setTotal("Veuillez donner le total de départ et le total attendu");
+                return;
             }
-        }
-        if (finalTranscript.trim()) {
-            const specialOppParts = finalTranscript.split(specialWord);
-            let formattedText = formatText(specialOppParts[0]) + " ";
-            setResult(eval(`${result === 0 ? "" : result} ${formattedText}`));
-            setTranscript(transcript + formattedText);
-            if (specialOppParts.length > 1) {
-                const parts = specialOppParts[1].split(" ").map(formatPart).filter(p => p !== "");
-                const from = Number(parts[0]);
-                const to = Number(parts[1]);
-                if (!isNaN(from) && !isNaN(to)) {
-                    setTotal(`Total sur ${to} : ${(result / from * to).toString()}`);
-                }
-            }
+            setTotal(`Total sur ${totalTo} : ${Math.round((result / totalFrom * totalTo) * 100) / 100}`);
         }
     }
     catch (e) {
@@ -102,9 +90,6 @@ recognition.onend = () => {
         setTimeout(() => {
             recognition.start();
         }, 200);
-    }
-    else {
-        recognition.stop();
     }
 };
 function startMic() {
