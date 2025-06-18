@@ -4,14 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#ffffff" />
-  <link rel="manifest" href="../manifest.json" />
+  <link rel="manifest" href="manifest.json" />
   <title>Vocalculs</title>
 </head>
 <body>
 <h1>Vocalculs</h1>
-<button onclick="startMic()">Parler</button>
-<p id="status">Clique pour commencer</p>
-<p id="output"></p>
+<button id="start">Commencer</button>
+<button id="stop">Stop</button>
+<p id="transcript"></p>
+<p><b id="result"></b></p>
+<p id="total"></p>
+<p id="status"></p>
 </body>
 </html>
 <script src="app.js"></script>
