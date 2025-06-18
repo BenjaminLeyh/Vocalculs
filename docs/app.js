@@ -58,17 +58,31 @@ function formatText(text) {
 }
 recognition.onresult = (event) => {
     try {
-        let newTranscript = event.results[0][0].transcript;
-        const specialOppParts = newTranscript.split(specialWord);
-        let formattedText = formatText(specialOppParts[0]) + " ";
-        setResult(eval(`${result === 0 ? "" : result} ${formattedText}`));
-        setTranscript(transcript + formattedText);
-        if (specialOppParts.length > 1) {
-            const parts = specialOppParts[1].split(" ").map((part) => { return formatPart(part); }).filter((part) => part !== "");
-            console.log(parts);
-            const from = parts[0];
-            const to = parts[1];
-            setTotal(`Total sur ${to} : ${(result / from * to).toString()}`);
+        let finalTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            const res = event.results[i][0];
+            const transcriptPart = res.transcript.trim();
+            if (event.results[i].isFinal) {
+                finalTranscript += transcriptPart + " ";
+            }
+            else {
+                // Optionnel : tu peux afficher le transcript en direct ici
+                // transcriptElement!.innerText = transcript + transcriptPart;
+            }
+        }
+        if (finalTranscript.trim()) {
+            const specialOppParts = finalTranscript.split(specialWord);
+            let formattedText = formatText(specialOppParts[0]) + " ";
+            setResult(eval(`${result === 0 ? "" : result} ${formattedText}`));
+            setTranscript(transcript + formattedText);
+            if (specialOppParts.length > 1) {
+                const parts = specialOppParts[1].split(" ").map(formatPart).filter(p => p !== "");
+                const from = Number(parts[0]);
+                const to = Number(parts[1]);
+                if (!isNaN(from) && !isNaN(to)) {
+                    setTotal(`Total sur ${to} : ${(result / from * to).toString()}`);
+                }
+            }
         }
     }
     catch (e) {
@@ -83,6 +97,9 @@ recognition.onend = () => {
         setTimeout(() => {
             recognition.start();
         }, 200);
+    }
+    else {
+        recognition.stop();
     }
 };
 function startMic() {
