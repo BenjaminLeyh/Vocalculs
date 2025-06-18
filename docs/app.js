@@ -5,7 +5,6 @@ recognition.lang = 'fr-FR';
 recognition.interimResults = false;
 const specialWord = "total";
 const next = "suivant";
-const accepted = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "*", "-", "/", "."];
 const motsVersChiffres = {
     "zéro": "0",
     "un": "1",
@@ -85,6 +84,7 @@ recognition.onend = () => {
         }, 200);
     }
 };
+let recognitionInterval;
 function startMic() {
     console.log("Starting Mic...");
     navigator.mediaDevices.getUserMedia({ audio: true })
@@ -95,6 +95,9 @@ function startMic() {
         statusElement.innerText = "Transcription en cours ...";
         clearElements();
         recognition.start();
+        recognitionInterval = setInterval(() => {
+            recognition.stop(); // force la fin
+        }, 3000); // r
     })
         .catch((err) => {
         console.log(err);
@@ -105,9 +108,12 @@ function stopMic() {
     if (statusElement) {
         statusElement.innerText = "";
     }
+    clearInterval(recognitionInterval);
+    recognition.stop();
 }
 function formatPart(part) {
     var _a;
+    part = part.replace(",", ".");
     if (isNaN(Number(part))) {
         return (_a = motsVersChiffres[part]) !== null && _a !== void 0 ? _a : "";
     }

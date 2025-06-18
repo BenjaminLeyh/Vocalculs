@@ -4,7 +4,6 @@ recognition.lang = 'fr-FR';
 recognition.interimResults = false;
 const specialWord = "total"
 const next = "suivant"
-const accepted = ["0","1","2","3","4","5","6","7","8","9","+","*","-","/","."];
 const motsVersChiffres: Record<string, string> = {
     "zéro": "0",
     "un": "1",
@@ -94,6 +93,8 @@ recognition.onend = () => {
     }
 };
 
+let recognitionInterval: any;
+
 function startMic(): void {
     console.log("Starting Mic...");
     navigator.mediaDevices.getUserMedia({ audio: true })
@@ -104,20 +105,26 @@ function startMic(): void {
             statusElement.innerText = "Transcription en cours ...";
             clearElements()
             recognition.start();
+            recognitionInterval = setInterval(() => {
+                recognition.stop(); // force la fin
+            }, 3000); // r
         })
         .catch((err: Error) => {
             console.log(err);
         });
 }
 
-function stopMic(): void {
+function stopMic() {
     stopping = true;
     if(statusElement) {
         statusElement.innerText = "";
     }
+    clearInterval(recognitionInterval);
+    recognition.stop();
 }
 
 function formatPart(part: string): string {
+    part = part.replace(",", ".")
     if(isNaN(Number(part))) {
         return motsVersChiffres[part] ?? "";
     }
