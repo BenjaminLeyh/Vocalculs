@@ -61,7 +61,7 @@ recognition.onresult = (event) => {
         let newTranscript = event.results[0][0].transcript;
         const specialOppParts = newTranscript.split(specialWord);
         let formattedText = formatText(specialOppParts[0]) + " ";
-        setResult(eval(transcript + formattedText));
+        setResult(eval(`${result === 0 ? "" : result} ${formattedText}`));
         setTranscript(transcript + formattedText);
         if (specialOppParts.length > 1) {
             const parts = specialOppParts[1].split(" ").map((part) => { return formatPart(part); }).filter((part) => part !== "");
@@ -72,7 +72,7 @@ recognition.onresult = (event) => {
         }
     }
     catch (e) {
-        console.error("Erreur lors de l'évaluation de la transcription");
+        console.error("Erreur lors de l'évaluation de la transcription : ", e);
     }
 };
 recognition.onerror = (event) => {
@@ -80,7 +80,9 @@ recognition.onerror = (event) => {
 };
 recognition.onend = () => {
     if (!stopping) {
-        recognition.start();
+        setTimeout(() => {
+            recognition.start();
+        }, 200);
     }
 };
 function startMic() {

@@ -68,7 +68,7 @@ recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
         const specialOppParts = newTranscript.split(specialWord);
 
         let formattedText = formatText(specialOppParts[0]) + " ";
-        setResult(eval(transcript + formattedText));
+        setResult(eval(`${result === 0 ? "" : result} ${formattedText}`));
         setTranscript(transcript + formattedText);
         if(specialOppParts.length > 1) {
             const parts = specialOppParts[1].split(" ").map((part: string) => { return formatPart(part) }).filter((part: string) => part !== "");
@@ -78,7 +78,7 @@ recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
             setTotal(`Total sur ${to} : ${(result / from * to).toString()}`)
         }
     } catch (e) {
-        console.error("Erreur lors de l'évaluation de la transcription");
+        console.error("Erreur lors de l'évaluation de la transcription : ", e);
     }
 };
 
@@ -87,10 +87,13 @@ recognition.onerror = (event: any) => {
 };
 
 recognition.onend = () => {
-    if(!stopping) {
-        recognition.start();
+    if (!stopping) {
+        setTimeout(() => {
+            recognition.start();
+        }, 200);
     }
 };
+
 function startMic(): void {
     console.log("Starting Mic...");
     navigator.mediaDevices.getUserMedia({ audio: true })
