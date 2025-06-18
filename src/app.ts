@@ -61,6 +61,11 @@ function formatText(text: any) {
     }).join(" ");
 }
 
+recognition.onspeechend = () => {
+        recognition.start();
+        recognition.stop(); // forcer Safari à "réinitialiser" le micro
+};
+
 recognition.onresult = (event: {
     resultIndex: number;
     results: SpeechRecognitionResultList;
@@ -75,6 +80,7 @@ recognition.onresult = (event: {
             if (event.results[i].isFinal) {
                 finalTranscript += transcriptPart + " ";
             } else {
+                console.log(transcriptPart);
                 // Optionnel : tu peux afficher le transcript en direct ici
                 // transcriptElement!.innerText = transcript + transcriptPart;
             }
