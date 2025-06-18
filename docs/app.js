@@ -2,7 +2,7 @@
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 recognition.lang = 'fr-FR';
-recognition.interimResults = false;
+recognition.interimResults = true;
 recognition.continuous = true;
 const specialWord = "total";
 const next = "suivant";
