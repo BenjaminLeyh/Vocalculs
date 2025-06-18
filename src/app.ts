@@ -2,6 +2,7 @@ const SpeechRecognition = (window as any).SpeechRecognition || (window as any).w
 const recognition = new SpeechRecognition();
 recognition.lang = 'fr-FR';
 recognition.interimResults = false;
+recognition.continuous = true;
 const specialWord = "total"
 const next = "suivant"
 const motsVersChiffres: Record<string, string> = {
@@ -93,8 +94,6 @@ recognition.onend = () => {
     }
 };
 
-let recognitionInterval: any;
-
 function startMic(): void {
     console.log("Starting Mic...");
     navigator.mediaDevices.getUserMedia({ audio: true })
@@ -105,22 +104,17 @@ function startMic(): void {
             statusElement.innerText = "Transcription en cours ...";
             clearElements()
             recognition.start();
-            recognitionInterval = setInterval(() => {
-                recognition.stop(); // force la fin
-            }, 3000); // r
         })
         .catch((err: Error) => {
             console.log(err);
         });
 }
 
-function stopMic() {
+function stopMic(): void {
     stopping = true;
     if(statusElement) {
         statusElement.innerText = "";
     }
-    clearInterval(recognitionInterval);
-    recognition.stop();
 }
 
 function formatPart(part: string): string {

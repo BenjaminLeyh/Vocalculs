@@ -3,6 +3,7 @@ const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogni
 const recognition = new SpeechRecognition();
 recognition.lang = 'fr-FR';
 recognition.interimResults = false;
+recognition.continuous = true;
 const specialWord = "total";
 const next = "suivant";
 const motsVersChiffres = {
@@ -84,7 +85,6 @@ recognition.onend = () => {
         }, 200);
     }
 };
-let recognitionInterval;
 function startMic() {
     console.log("Starting Mic...");
     navigator.mediaDevices.getUserMedia({ audio: true })
@@ -95,9 +95,6 @@ function startMic() {
         statusElement.innerText = "Transcription en cours ...";
         clearElements();
         recognition.start();
-        recognitionInterval = setInterval(() => {
-            recognition.stop(); // force la fin
-        }, 3000); // r
     })
         .catch((err) => {
         console.log(err);
@@ -108,8 +105,6 @@ function stopMic() {
     if (statusElement) {
         statusElement.innerText = "";
     }
-    clearInterval(recognitionInterval);
-    recognition.stop();
 }
 function formatPart(part) {
     var _a;
