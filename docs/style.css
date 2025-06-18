@@ -1,0 +1,137 @@
+:root {
+        --primary-color: #cb313e;
+        --primary-color-light: #dc5b66;
+
+        --secondary-color: #f7bfcf;
+        --secondary-color-light: #fde6ec;
+}
+
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(1rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+h1 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+#content {
+    min-height: 10rem;
+    display: flex;
+    flex-direction: column;
+}
+
+#transcript:empty,
+#result:empty,
+#total:empty {
+    display: none;
+}
+
+#transcript,
+#result,
+#total {
+    font-family: 'IBM Plex Mono', monospace;
+    text-align: center;
+    margin: 0.5rem 0;
+    animation: fadeInUp 0.5s ease;
+}
+
+#result {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+#total {
+    font-weight: bold;
+    font-size: 2rem;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    margin-top: 1rem;
+}
+
+#total:not(:empty) {
+    background-color: var(--secondary-color-light);
+}
+
+button {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#start {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 0.75rem;
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 18rem;
+}
+
+#start:hover {
+    background-color: var(--primary-color-light);
+}
+
+#stop {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    width: 100%;
+    max-width: 12rem;
+}
+
+#status {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+@media (max-width: 500px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    #start {
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+    }
+
+    #stop {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+
+    #total {
+        font-size: 1.5rem;
+        padding: 0.75rem 1rem;
+    }
+}

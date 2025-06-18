@@ -79,13 +79,14 @@ recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
                 totalTo = parts[1];
             }
             if(!totalFrom || !totalTo){
-                setTotal("Veuillez donner le total de départ et le total attendu")
+                setStatus("Veuillez donner le total de départ et le total attendu")
                 return;
             }
-            setTotal(`Total sur ${totalTo} : ${Math.round((result / totalFrom * totalTo) * 100) / 100}`)
+            setTotal(`${Math.round((result / totalFrom * totalTo) * 100) / 100}/${totalTo}`);
         }
     } catch (e) {
         console.error("Erreur lors de l'évaluation de la transcription : ", e);
+        setStatus("Veuilez réessayer")
     }
 };
 
@@ -105,10 +106,7 @@ function startMic(): void {
     console.log("Starting Mic...");
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream: MediaStream) => {
-            if (!statusElement || !transcriptElement || !resultElement) {
-                return;
-            }
-            statusElement.innerText = "Transcription en cours ...";
+            setStatus("Transcription en cours ...");
             clearElements()
             recognition.start();
         })
@@ -119,9 +117,7 @@ function startMic(): void {
 
 function stopMic(): void {
     stopping = true;
-    if(statusElement) {
-        statusElement.innerText = "";
-    }
+    setStatus("Appuyer sur Commencer pour lancer le calcul")
 }
 
 function formatPart(part: string): string {
@@ -149,6 +145,12 @@ function setTranscript(newValue: string) {
 function setTotal(newValue : string) {
     if(totalElement) {
         totalElement.innerText = newValue;
+    }
+}
+
+function setStatus(newValue : string) {
+    if(statusElement) {
+        statusElement.innerText = newValue;
     }
 }
 
