@@ -90,9 +90,11 @@ recognition.onresult = (event: {
             setResult(tempResult)
             setTranscript(transcript + formattedText);
         } else {
-            tempResult = eval(`${result || ""} ${formattedText}`);
-            setResultElement(tempResult);
-            setTranscriptElement(transcript + formattedText);
+            try {
+                tempResult = eval(`${result || ""} ${formattedText}`);
+                setResultElement(tempResult);
+                setTranscriptElement(transcript + formattedText);
+            } catch (error) {}
         }
 
         if (partsForTotal.length > 1) {
@@ -102,8 +104,8 @@ recognition.onresult = (event: {
                 totalTo = Number(parts[1]);
             }
 
-            if (!totalFrom || !totalTo || isNaN(totalFrom) || isNaN(totalTo)) {
-                setStatusElement("Veuillez donner le total de départ et le total attendu");
+            if (finalTranscript && !totalFrom || !totalTo || isNaN(totalFrom) || isNaN(totalTo)) {
+                setTempStatusElement("Veuillez donner le total de départ et le total attendu");
                 return;
             }
 
@@ -112,7 +114,7 @@ recognition.onresult = (event: {
 
     } catch (e) {
         console.error("Erreur lors de l'évaluation de la transcription : ", e);
-        setStatusElement("Veuillez réessayer");
+        setTempStatusElement("Veuillez réessayer");
     }
 };
 
@@ -130,7 +132,6 @@ recognition.onend = () => {
 };
 
 function startMic(): void {
-    console.log("Starting Mic...");
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream: MediaStream) => {
             setStatusElement("Transcription en cours ...");
@@ -193,4 +194,11 @@ function clearElements() {
     setResult(0)
     setTranscript("")
     setTotalElement("")
+}
+
+function setTempStatusElement(newValue : string) {
+    setStatusElement(newValue);
+    setTimeout(() => {
+        setStatusElement("Transcription en cours ...");
+    }, 2000)
 }
