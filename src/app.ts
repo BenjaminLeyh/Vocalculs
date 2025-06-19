@@ -55,8 +55,9 @@ stopButton?.addEventListener("click", () => {
 })
 
 transcriptElement?.addEventListener("input", event => {
-    if (event.target instanceof HTMLInputElement) {
+    if (event.target instanceof HTMLTextAreaElement) {
         transcript = event.target.value;
+        console.log(event.target.value);
         try {
             setResult(eval(transcript));
         } catch {
@@ -145,12 +146,8 @@ recognition.onend = () => {
 };
 
 function start(): void {
-    if (title) title.classList.add("small-title");
-    if (controls) controls.classList.add("down");
-    if (content) content.classList.remove("hidden")
-    if (stopButton) stopButton.classList.remove("hidden");
-    if (transcriptElement) transcriptElement.classList.remove("hidden");
-    /*
+    if (content) content.classList.remove("collapsed")
+    if (stopButton) stopButton.classList.remove("collapsed");
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream: MediaStream) => {
             setStatusElement("Transcription en cours ...");
@@ -160,16 +157,11 @@ function start(): void {
         .catch((err: Error) => {
             console.log(err);
         });
-
-     */
 }
 
 function stop(): void {
-    if (title) title.classList.remove("small-title");
-    if (controls) controls.classList.remove("down");
-    if (content) content.classList.add("hidden")
-    if (stopButton) stopButton.classList.add("hidden");
-    if (transcriptElement) transcriptElement.classList.add("hidden");
+    if (stopButton) stopButton.classList.add("collapsed");
+    if (content) content.classList.add("collapsed")
 
     clearElements()
     setStatusElement("Appuie sur Calculer pour lancer le calcul")
@@ -218,7 +210,7 @@ function setStatusElement(newValue : string) {
 }
 
 function clearElements() {
-    setTranscriptElement("")
+    setTranscript("")
     setResult(0)
     setTotalElement("")
 }

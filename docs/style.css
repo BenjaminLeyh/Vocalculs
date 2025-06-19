@@ -32,6 +32,17 @@
     }
 }
 
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(1rem);
+    }
+}
+
 html {
     font-family: 'Cloudy', sans-serif;
     background-color: var(--secondary-color);
@@ -50,31 +61,21 @@ main {
     justify-content: center;
     height: 97vh;
     width: 30rem;
+    max-width: 100%;
     margin: 0 auto;
-    transition: all .5s ease;
 }
 
 main > * {
-    transition: all .5s ease;
+    max-height: 1000px;
+    opacity: 1;
+    transition: all 1s ease;
 }
 
 h1 {
     font-size: 3rem;
-    transition: font-size 0.5s ease, padding 0.5s ease;
-    z-index: 10;
     background: var(--secondary-color);
     padding: 1rem 2rem;
     border-radius: 2rem;
-
-}
-
-h1.small-title {
-    font-size: 1.5rem;
-    padding: 0.5rem 1rem;
-}
-
-.hidden {
-    display: none !important;
 }
 
 #content {
@@ -85,11 +86,6 @@ h1.small-title {
     justify-content: space-between;
     gap: 1rem;
     flex-grow:1;
-}
-
-#result:empty,
-#total:empty {
-    display: none;
 }
 
 #transcript,
@@ -108,6 +104,7 @@ h1.small-title {
     border-radius: 2rem;
     font-size: 1.4rem;
     text-align: center;
+    align-content: end;
     font-family: monospace;
     padding: 0.5rem 1rem;
     resize: none;
@@ -116,6 +113,7 @@ h1.small-title {
     max-width: 100%;
     height: auto;
     line-height: 1.5;
+    flex-grow: 1;
 }
 
 #transcript:focus {
@@ -133,20 +131,23 @@ h1.small-title {
     font-size: 1.8rem;
     padding: 1rem 1.5rem;
     border-radius: 3rem;
+    height: 2.1rem
+}
+
+#total:empty {
+    background-color: var(--secondary-color);
 }
 
 #controls {
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     transition: bottom 0.5s ease;
- }
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 button {
     font-family: 'Cloudy', sans-serif;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.5s ease;
 }
 
 #start {
@@ -179,11 +180,19 @@ button {
     border-radius: 3rem;
     margin-top: 1rem;
     max-width: 18rem;
-    animation: fadeInUp .5s ease
+    animation: fadeInUp 1s ease;
+    max-height: 1000px;
+    opacity: 1;
+    transition: all .5s ease;
 }
 
 #status {
     margin-top: 1.5rem;
     font-size: 0.9rem;
     text-align: center;
+}
+
+.collapsed {
+    max-height: 0 !important;
+    opacity: 0 !important;
 }
