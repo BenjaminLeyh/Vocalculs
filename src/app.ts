@@ -1,7 +1,7 @@
 const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 recognition.lang = 'fr-FR';
-recognition.interimResults = false;
+recognition.interimResults = true;
 const specialWord = "total"
 const next = "suivant"
 const motsVersChiffres: Record<string, string> = {
@@ -62,30 +62,58 @@ function formatText(text: any) {
     }).join(" ");
 }
 
-recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
+recognition.onresult = (event: {
+    resultIndex: number;
+    results: SpeechRecognitionResultList;
+}) => {
+    let interimTranscript = "";
+    let finalTranscript = "";
+
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+        const transcriptChunk = event.results[i][0].transcript.toLowerCase();
+        console.log("chunk : ", transcriptChunk);
+        if (event.results[i].isFinal) {
+            finalTranscript += transcriptChunk;
+            console.log("final : ", finalTranscript);
+        } else {
+            interimTranscript += transcriptChunk;
+            console.log("interim : ", interimTranscript);
+        }
+
+    }
+
     try {
-        let newTranscript: string = event.results[0][0].transcript.toLowerCase();
-        const partsForTotal = newTranscript.split(specialWord);
-        let formattedText = formatText(partsForTotal[0]) + " ";
-        setResult(eval(`${result || ""} ${formattedText}`));
-        setTranscript(transcript + formattedText);
-        if(partsForTotal.length > 1) {
-            if(partsForTotal[1].length > 0) {
-                const parts = partsForTotal[1].split(" ").map((part: string) => { return formatPart(part) }).filter((part: string) => part !== "");
+        const partsForTotal = finalTranscript ? finalTranscript.split(specialWord) : interimTranscript.split(specialWord);
+        const formattedText = formatText(partsForTotal[0]) + " ";
+        if(finalTranscript) {
+            setResult(eval(`${result || ""} ${formattedText}`))
+            setTranscript(transcript + formattedText);
+        } else {
+            setResultElement(eval(`${result || ""} ${formattedText}`));
+            setTranscriptElement(transcript + formattedText);
+        }
+
+        if (partsForTotal.length > 1) {
+            const parts = partsForTotal[1].split(" ").map(formatPart).filter(p => p !== "");
+            if(parts.length > 1) {
                 totalFrom = Number(parts[0]);
                 totalTo = Number(parts[1]);
             }
-            if(!totalFrom || !totalTo || isNaN(totalFrom) || isNaN(totalTo)) {
-                setStatus("Veuillez donner le total de départ et le total attendu")
+
+            if (!totalFrom || !totalTo || isNaN(totalFrom) || isNaN(totalTo)) {
+                setStatusElement("Veuillez donner le total de départ et le total attendu");
                 return;
             }
-            setTotal(`${Math.round((result / totalFrom * totalTo) * 100) / 100}/${totalTo}`);
+
+            setTotalElement(`${Math.round((result / totalFrom * totalTo) * 100) / 100}/${totalTo}`);
         }
+
     } catch (e) {
         console.error("Erreur lors de l'évaluation de la transcription : ", e);
-        setStatus("Veuilez réessayer")
+        setStatusElement("Veuillez réessayer");
     }
 };
+
 
 recognition.onerror = (event: any) => {
     console.error("Erreur de reconnaissance :", event.error);
@@ -103,7 +131,7 @@ function startMic(): void {
     console.log("Starting Mic...");
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream: MediaStream) => {
-            setStatus("Transcription en cours ...");
+            setStatusElement("Transcription en cours ...");
             clearElements()
             recognition.start();
         })
@@ -114,7 +142,7 @@ function startMic(): void {
 
 function stopMic(): void {
     stopping = true;
-    setStatus("Appuyer sur Calculum pour lancer le calcul")
+    setStatusElement("Appuyer sur Calculum pour lancer le calcul")
 }
 
 function formatPart(part: string): string {
@@ -127,25 +155,33 @@ function formatPart(part: string): string {
 
 function setResult(newValue: number) {
     result = newValue;
-    if(resultElement) {
-        resultElement.innerText = newValue == 0 ? "" : newValue.toString();
-    }
+    setResultElement(newValue)
 }
 
 function setTranscript(newValue: string) {
     transcript = newValue;
-    if(transcriptElement) {
-        transcriptElement.innerText = newValue;
+    setTranscriptElement(newValue);
+}
+
+function setResultElement(newValue: number) {
+    if(resultElement) {
+        resultElement.innerText = newValue === 0 ? "" : newValue.toString();
     }
 }
 
-function setTotal(newValue : string) {
+function setTranscriptElement(newValue: string) {
+    if(transcriptElement) {
+        transcriptElement.innerText = newValue
+    }
+}
+
+function setTotalElement(newValue : string) {
     if(totalElement) {
         totalElement.innerText = newValue;
     }
 }
 
-function setStatus(newValue : string) {
+function setStatusElement(newValue : string) {
     if(statusElement) {
         statusElement.innerText = newValue;
     }
@@ -154,5 +190,5 @@ function setStatus(newValue : string) {
 function clearElements() {
     setResult(0)
     setTranscript("")
-    setTotal("")
+    setTotalElement("")
 }
