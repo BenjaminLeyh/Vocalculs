@@ -35,13 +35,13 @@ let transcript = "";
 let stopping = false;
 let totalFrom;
 let totalTo;
+let tempResult = 0;
 const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
 const transcriptElement = document.getElementById("transcript");
 const resultElement = document.getElementById("result");
 const statusElement = document.getElementById("status");
 const totalElement = document.getElementById("total");
-const consoleElement = document.getElementById("console");
 startButton === null || startButton === void 0 ? void 0 : startButton.addEventListener("click", () => {
     startMic();
 });
@@ -77,11 +77,13 @@ recognition.onresult = (event) => {
         const partsForTotal = finalTranscript ? finalTranscript.split(specialWord) : interimTranscript.split(specialWord);
         const formattedText = formatText(partsForTotal[0]) + " ";
         if (finalTranscript) {
-            setResult(eval(`${result || ""} ${formattedText}`));
+            tempResult = eval(`${result || ""} ${formattedText}`);
+            setResult(tempResult);
             setTranscript(transcript + formattedText);
         }
         else {
-            setResultElement(eval(`${result || ""} ${formattedText}`));
+            tempResult = eval(`${result || ""} ${formattedText}`);
+            setResultElement(tempResult);
             setTranscriptElement(transcript + formattedText);
         }
         if (partsForTotal.length > 1) {
@@ -94,7 +96,7 @@ recognition.onresult = (event) => {
                 setStatusElement("Veuillez donner le total de départ et le total attendu");
                 return;
             }
-            setTotalElement(`${Math.round((result / totalFrom * totalTo) * 100) / 100}/${totalTo}`);
+            setTotalElement(`${Math.round((tempResult / totalFrom * totalTo) * 100) / 100}/${totalTo}`);
         }
     }
     catch (e) {
