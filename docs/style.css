@@ -1,3 +1,17 @@
+@font-face {
+    font-family: 'Atop';
+    src: url('fonts/atop.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Cloudy';
+    src: url('fonts/Cloudy Peaches Demo.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 :root {
         --primary-color: #cb313e;
         --primary-color-light: #dc5b66;
@@ -18,12 +32,15 @@
     }
 }
 
-body {
-    margin: 0;
-    font-family: sans-serif;
-    font-weight: 400;
+html {
+    font-family: 'Cloudy', sans-serif;
     background-color: var(--secondary-color);
     color: var(--primary-color);
+}
+
+body {
+    margin: 0;
+    font-weight: 400;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -78,13 +95,14 @@ h1 {
 }
 
 button {
+    font-family: 'Cloudy', sans-serif;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 #start {
     background-color: var(--primary-color);
-    color: white;
+    color: var(--secondary-color);
     border: none;
     padding: 1rem 2rem;
     font-size: 2rem;

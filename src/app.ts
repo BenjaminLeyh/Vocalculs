@@ -71,13 +71,10 @@ recognition.onresult = (event: {
 
     for (let i = event.resultIndex; i < event.results.length; ++i) {
         const transcriptChunk = event.results[i][0].transcript.toLowerCase();
-        console.log("chunk : ", transcriptChunk);
         if (event.results[i].isFinal) {
             finalTranscript += transcriptChunk;
-            console.log("final : ", finalTranscript);
         } else {
             interimTranscript += transcriptChunk;
-            console.log("interim : ", interimTranscript);
         }
 
     }
@@ -105,7 +102,7 @@ recognition.onresult = (event: {
             }
 
             if (finalTranscript && !totalFrom || !totalTo || isNaN(totalFrom) || isNaN(totalTo)) {
-                setTempStatusElement("Veuillez donner le total de départ et le total attendu");
+                setTempStatusElement("Donne le total de départ et le total attendu");
                 return;
             }
 
@@ -114,7 +111,7 @@ recognition.onresult = (event: {
 
     } catch (e) {
         console.error("Erreur lors de l'évaluation de la transcription : ", e);
-        setTempStatusElement("Veuillez réessayer");
+        setTempStatusElement("Réessaie");
     }
 };
 
@@ -144,8 +141,10 @@ function startMic(): void {
 }
 
 function stopMic(): void {
+    result = 0;
+    transcript = "";
     stopping = true;
-    setStatusElement("Appuyer sur Calculum pour lancer le calcul")
+    setStatusElement("Appuie sur Calculer pour lancer le calcul")
 }
 
 function formatPart(part: string): string {
