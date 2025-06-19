@@ -60,7 +60,7 @@ function formatText(text) {
 }
 recognition.onresult = (event) => {
     if (consoleElement)
-        consoleElement.innerText += "onResult called\n";
+        consoleElement.innerText += `${event.results[0][0].transcript} \n`;
     try {
         let newTranscript = event.results[0][0].transcript;
         const partsForTotal = newTranscript.split(specialWord);
@@ -80,6 +80,7 @@ recognition.onresult = (event) => {
             }
             setTotal(`${Math.round((result / totalFrom * totalTo) * 100) / 100}/${totalTo}`);
         }
+        recognition.start();
     }
     catch (e) {
         console.error("Erreur lors de l'évaluation de la transcription : ", e);
@@ -97,6 +98,9 @@ recognition.onend = () => {
             recognition.start();
         }, 200);
     }
+    else {
+        recognition.stop();
+    }
 };
 function startMic() {
     console.log("Starting Mic...");
@@ -112,7 +116,7 @@ function startMic() {
 }
 function stopMic() {
     stopping = true;
-    setStatus("Appuyer sur Commencer pour lancer le calcul");
+    setStatus("Appuyer sur Calculum pour lancer le calcul");
 }
 function formatPart(part) {
     var _a;
