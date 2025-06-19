@@ -3,11 +3,11 @@
   "short_name": "Vocalculum",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "description": "App simple avec accès au micro",
+  "background_color": "#f7bfcf",
+  "description": "Application de calculs vocaux",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "./images/logo.png",
       "sizes": "192x192",
       "type": "image/png"
     }
