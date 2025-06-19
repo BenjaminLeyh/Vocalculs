@@ -115,12 +115,14 @@ button {
     max-width: 18rem;
 }
 
-#start:hover {
-    background-color: var(--primary-color-light);
+@media (hover: hover) and (pointer: fine) {
+    #start:hover {
+        background-color: var(--primary-color-light);
+    }
 }
 
 #start:active {
-    background-color: var(--primary-color);
+    background-color: var(--primary-color-light);
 }
 
 #stop {
@@ -129,7 +131,7 @@ button {
     border: none;
     padding: 1rem 2rem;
     font-size: 1rem;
-    border-radius: 0.5rem;
+    border-radius: 3rem;
     margin-top: 1rem;
     max-width: 18rem;
 }
