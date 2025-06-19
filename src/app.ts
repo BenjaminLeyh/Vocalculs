@@ -41,7 +41,7 @@ const transcriptElement = document.getElementById("transcript")
 const resultElement = document.getElementById("result")
 const statusElement = document.getElementById("status");
 const totalElement = document.getElementById("total");
-
+const consoleElement = document.getElementById("console");
 
 startButton?.addEventListener("click", () => {
     startMic()
@@ -63,6 +63,7 @@ function formatText(text: any) {
 }
 
 recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
+    if(consoleElement) consoleElement.innerText += "onResult called\n"
     try {
         let newTranscript = event.results[0][0].transcript
 
@@ -75,10 +76,10 @@ recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
         if(partsForTotal.length > 1) {
             if(partsForTotal[1].length > 0) {
                 const parts = partsForTotal[1].split(" ").map((part: string) => { return formatPart(part) }).filter((part: string) => part !== "");
-                totalFrom = parts[0];
-                totalTo = parts[1];
+                totalFrom = Number(parts[0]);
+                totalTo = Number(parts[1]);
             }
-            if(!totalFrom || !totalTo){
+            if(!totalFrom || !totalTo || !isNaN(totalFrom) || !isNaN(totalTo)) {
                 setStatus("Veuillez donner le total de départ et le total attendu")
                 return;
             }
@@ -95,6 +96,8 @@ recognition.onerror = (event: any) => {
 };
 
 recognition.onend = () => {
+    if(consoleElement) consoleElement.innerText += "onEnd called\n"
+
     if (!stopping) {
         setTimeout(() => {
             recognition.start();

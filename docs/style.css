@@ -20,7 +20,11 @@
 
 body {
     margin: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: "Roboto", sans-serif !important;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
     background-color: var(--secondary-color);
     color: var(--primary-color);
     display: flex;
@@ -34,7 +38,7 @@ body {
 
 h1 {
     margin-bottom: 2rem;
-    font-size: 2rem;
+    font-size: 3rem;
     color: var(--primary-color);
 }
 
@@ -86,8 +90,8 @@ button {
     color: white;
     border: none;
     padding: 1rem 2rem;
-    font-size: 1.2rem;
-    border-radius: 0.75rem;
+    font-size: 2rem;
+    border-radius: 1.2rem;
     margin-top: 2rem;
     width: 100%;
     max-width: 18rem;
