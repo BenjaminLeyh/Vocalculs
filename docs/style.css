@@ -77,16 +77,20 @@ h1 {
     animation: fadeInUp 0.5s ease;
 }
 
+#transcript {
+    font-size: 1.2rem
+}
+
 #result {
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
 }
 
 #total {
     font-weight: bold;
     font-size: 2rem;
     padding: 1rem 1.5rem;
-    border-radius: 1rem;
+    border-radius: 3rem;
     margin-top: 1rem;
 }
 
@@ -108,7 +112,6 @@ button {
     font-size: 2rem;
     border-radius: 3rem;
     margin-top: 2rem;
-    width: 100%;
     max-width: 18rem;
 }
 
@@ -116,15 +119,18 @@ button {
     background-color: var(--primary-color-light);
 }
 
+#start:active {
+    background-color: var(--primary-color);
+}
+
 #stop {
     background-color: transparent;
     color: var(--primary-color);
     border: none;
-    padding: 0.75rem 1.5rem;
+    padding: 1rem 2rem;
     font-size: 1rem;
     border-radius: 0.5rem;
     margin-top: 1rem;
-    width: 100%;
     max-width: 18rem;
 }
 
