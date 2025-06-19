@@ -62,7 +62,7 @@ recognition.onresult = (event) => {
     if (consoleElement)
         consoleElement.innerText += `${event.results[0][0].transcript} \n`;
     try {
-        let newTranscript = event.results[0][0].transcript;
+        let newTranscript = event.results[0][0].transcript.toLowerCase();
         const partsForTotal = newTranscript.split(specialWord);
         console.log("special", partsForTotal);
         let formattedText = formatText(partsForTotal[0]) + " ";
@@ -80,7 +80,6 @@ recognition.onresult = (event) => {
             }
             setTotal(`${Math.round((result / totalFrom * totalTo) * 100) / 100}/${totalTo}`);
         }
-        recognition.start();
     }
     catch (e) {
         console.error("Erreur lors de l'évaluation de la transcription : ", e);
