@@ -65,7 +65,7 @@ recognition.onresult = (event) => {
             consoleElement.innerText += `${transcript} \n`;
         const partsForTotal = newTranscript.split(specialWord);
         if (consoleElement)
-            consoleElement.innerText += `${partsForTotal} \n`;
+            consoleElement.innerText += `for total : ${partsForTotal[0]} , ${partsForTotal[1]} \n`;
         let formattedText = formatText(partsForTotal[0]) + " ";
         setResult(eval(`${result || ""} ${formattedText}`));
         setTranscript(transcript + formattedText);
