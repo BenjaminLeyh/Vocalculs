@@ -30,8 +30,8 @@ const motsVersChiffres = {
     "*": "*",
     "x": "*"
 };
-let result = 0;
 let transcript = "";
+let result = 0;
 let stopping = false;
 let totalFrom;
 let totalTo;
@@ -42,11 +42,25 @@ const transcriptElement = document.getElementById("transcript");
 const resultElement = document.getElementById("result");
 const statusElement = document.getElementById("status");
 const totalElement = document.getElementById("total");
+const title = document.querySelector("h1");
+const content = document.getElementById("content");
+const controls = document.getElementById("controls");
 startButton === null || startButton === void 0 ? void 0 : startButton.addEventListener("click", () => {
-    startMic();
+    start();
 });
 stopButton === null || stopButton === void 0 ? void 0 : stopButton.addEventListener("click", () => {
-    stopMic();
+    stop();
+});
+transcriptElement === null || transcriptElement === void 0 ? void 0 : transcriptElement.addEventListener("input", event => {
+    if (event.target instanceof HTMLInputElement) {
+        transcript = event.target.value;
+        try {
+            setResult(eval(transcript));
+        }
+        catch {
+            setTempStatusElement("Erreur dans le calcul");
+        }
+    }
 });
 function formatText(text) {
     console.log("before formatting : ", text);
@@ -115,21 +129,42 @@ recognition.onend = () => {
         recognition.stop();
     }
 };
-function startMic() {
+function start() {
+    if (title)
+        title.classList.add("small-title");
+    if (controls)
+        controls.classList.add("down");
+    if (content)
+        content.classList.remove("hidden");
+    if (stopButton)
+        stopButton.classList.remove("hidden");
+    if (transcriptElement)
+        transcriptElement.classList.remove("hidden");
+    /*
     navigator.mediaDevices.getUserMedia({ audio: true })
-        .then((stream) => {
-        setStatusElement("Transcription en cours ...");
-        clearElements();
-        recognition.start();
-    })
-        .catch((err) => {
-        console.log(err);
-    });
+        .then((stream: MediaStream) => {
+            setStatusElement("Transcription en cours ...");
+            clearElements()
+            recognition.start();
+        })
+        .catch((err: Error) => {
+            console.log(err);
+        });
+
+     */
 }
-function stopMic() {
-    result = 0;
-    transcript = "";
-    stopping = true;
+function stop() {
+    if (title)
+        title.classList.remove("small-title");
+    if (controls)
+        controls.classList.remove("down");
+    if (content)
+        content.classList.add("hidden");
+    if (stopButton)
+        stopButton.classList.add("hidden");
+    if (transcriptElement)
+        transcriptElement.classList.add("hidden");
+    clearElements();
     setStatusElement("Appuie sur Calculer pour lancer le calcul");
 }
 function formatPart(part) {
@@ -144,18 +179,18 @@ function setResult(newValue) {
     result = newValue;
     setResultElement(newValue);
 }
-function setTranscript(newValue) {
-    transcript = newValue;
-    setTranscriptElement(newValue);
-}
 function setResultElement(newValue) {
     if (resultElement) {
         resultElement.innerText = newValue === 0 ? "" : newValue.toString();
     }
 }
+function setTranscript(newValue) {
+    transcript = newValue;
+    setTranscriptElement(newValue);
+}
 function setTranscriptElement(newValue) {
     if (transcriptElement) {
-        transcriptElement.innerText = newValue;
+        transcriptElement.value = newValue;
     }
 }
 function setTotalElement(newValue) {
@@ -169,8 +204,8 @@ function setStatusElement(newValue) {
     }
 }
 function clearElements() {
+    setTranscriptElement("");
     setResult(0);
-    setTranscript("");
     setTotalElement("");
 }
 function setTempStatusElement(newValue) {

@@ -29,8 +29,8 @@ const motsVersChiffres: Record<string, string> = {
     "*": "*",
     "x": "*"
 };
+let transcript = ""
 let result: number = 0;
-let transcript: string = "";
 let stopping = false;
 let totalFrom: number;
 let totalTo: number;
@@ -38,18 +38,34 @@ let tempResult: number = 0;
 
 const startButton = document.getElementById("start")
 const stopButton = document.getElementById("stop")
-const transcriptElement = document.getElementById("transcript")
+const transcriptElement = document.getElementById("transcript") as HTMLTextAreaElement
 const resultElement = document.getElementById("result")
 const statusElement = document.getElementById("status");
 const totalElement = document.getElementById("total");
+const title = document.querySelector("h1");
+const content = document.getElementById("content");
+const controls = document.getElementById("controls");
 
 startButton?.addEventListener("click", () => {
-    startMic()
-})
+    start();
+});
 
 stopButton?.addEventListener("click", () => {
-    stopMic()
+    stop()
 })
+
+transcriptElement?.addEventListener("input", event => {
+    if (event.target instanceof HTMLInputElement) {
+        transcript = event.target.value;
+        try {
+            setResult(eval(transcript));
+        } catch {
+            setTempStatusElement("Erreur dans le calcul");
+        }
+    }
+
+})
+
 
 function formatText(text: any) {
     console.log("before formatting : ",text)
@@ -128,7 +144,13 @@ recognition.onend = () => {
     }
 };
 
-function startMic(): void {
+function start(): void {
+    if (title) title.classList.add("small-title");
+    if (controls) controls.classList.add("down");
+    if (content) content.classList.remove("hidden")
+    if (stopButton) stopButton.classList.remove("hidden");
+    if (transcriptElement) transcriptElement.classList.remove("hidden");
+    /*
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream: MediaStream) => {
             setStatusElement("Transcription en cours ...");
@@ -138,12 +160,18 @@ function startMic(): void {
         .catch((err: Error) => {
             console.log(err);
         });
+
+     */
 }
 
-function stopMic(): void {
-    result = 0;
-    transcript = "";
-    stopping = true;
+function stop(): void {
+    if (title) title.classList.remove("small-title");
+    if (controls) controls.classList.remove("down");
+    if (content) content.classList.add("hidden")
+    if (stopButton) stopButton.classList.add("hidden");
+    if (transcriptElement) transcriptElement.classList.add("hidden");
+
+    clearElements()
     setStatusElement("Appuie sur Calculer pour lancer le calcul")
 }
 
@@ -160,20 +188,20 @@ function setResult(newValue: number) {
     setResultElement(newValue)
 }
 
-function setTranscript(newValue: string) {
-    transcript = newValue;
-    setTranscriptElement(newValue);
-}
-
 function setResultElement(newValue: number) {
     if(resultElement) {
         resultElement.innerText = newValue === 0 ? "" : newValue.toString();
     }
 }
 
+function setTranscript(newValue: string) {
+    transcript = newValue;
+    setTranscriptElement(newValue)
+}
+
 function setTranscriptElement(newValue: string) {
     if(transcriptElement) {
-        transcriptElement.innerText = newValue
+        transcriptElement.value = newValue;
     }
 }
 
@@ -190,8 +218,8 @@ function setStatusElement(newValue : string) {
 }
 
 function clearElements() {
+    setTranscriptElement("")
     setResult(0)
-    setTranscript("")
     setTotalElement("")
 }
 
