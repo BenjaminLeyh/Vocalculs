@@ -61,11 +61,7 @@ function formatText(text) {
 recognition.onresult = (event) => {
     try {
         let newTranscript = event.results[0][0].transcript.toLowerCase();
-        if (consoleElement)
-            consoleElement.innerText += `${transcript} \n`;
         const partsForTotal = newTranscript.split(specialWord);
-        if (consoleElement)
-            consoleElement.innerText += `for total : ${partsForTotal[0]} , ${partsForTotal[1]} \n`;
         let formattedText = formatText(partsForTotal[0]) + " ";
         setResult(eval(`${result || ""} ${formattedText}`));
         setTranscript(transcript + formattedText);
@@ -75,7 +71,7 @@ recognition.onresult = (event) => {
                 totalFrom = Number(parts[0]);
                 totalTo = Number(parts[1]);
             }
-            if (!totalFrom || !totalTo || !isNaN(totalFrom) || !isNaN(totalTo)) {
+            if (!totalFrom || !totalTo || isNaN(totalFrom) || isNaN(totalTo)) {
                 setStatus("Veuillez donner le total de départ et le total attendu");
                 return;
             }
@@ -91,12 +87,8 @@ recognition.onerror = (event) => {
     console.error("Erreur de reconnaissance :", event.error);
 };
 recognition.onend = () => {
-    if (consoleElement)
-        consoleElement.innerText += "onEnd called\n";
     if (!stopping) {
-        setTimeout(() => {
-            recognition.start();
-        }, 200);
+        recognition.start();
     }
     else {
         recognition.stop();
