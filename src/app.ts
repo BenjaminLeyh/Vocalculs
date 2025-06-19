@@ -63,12 +63,13 @@ function formatText(text: any) {
 }
 
 recognition.onresult = (event: { results: { transcript: any; }[][]; }) => {
-    if(consoleElement) consoleElement.innerText += `${event.results[0][0].transcript} \n`
     try {
-        let newTranscript = event.results[0][0].transcript.toLowerCase();
+        let newTranscript: string = event.results[0][0].transcript.toLowerCase();
+        if(consoleElement) consoleElement.innerText += `${transcript} \n`
+
 
         const partsForTotal = newTranscript.split(specialWord);
-        console.log("special", partsForTotal)
+        if(consoleElement) consoleElement.innerText += `${partsForTotal} \n`
 
         let formattedText = formatText(partsForTotal[0]) + " ";
         setResult(eval(`${result || ""} ${formattedText}`));

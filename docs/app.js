@@ -59,12 +59,13 @@ function formatText(text) {
     }).join(" ");
 }
 recognition.onresult = (event) => {
-    if (consoleElement)
-        consoleElement.innerText += `${event.results[0][0].transcript} \n`;
     try {
         let newTranscript = event.results[0][0].transcript.toLowerCase();
+        if (consoleElement)
+            consoleElement.innerText += `${transcript} \n`;
         const partsForTotal = newTranscript.split(specialWord);
-        console.log("special", partsForTotal);
+        if (consoleElement)
+            consoleElement.innerText += `${partsForTotal} \n`;
         let formattedText = formatText(partsForTotal[0]) + " ";
         setResult(eval(`${result || ""} ${formattedText}`));
         setTranscript(transcript + formattedText);
