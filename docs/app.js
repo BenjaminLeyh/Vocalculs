@@ -42,9 +42,8 @@ const transcriptElement = document.getElementById("transcript");
 const resultElement = document.getElementById("result");
 const statusElement = document.getElementById("status");
 const totalElement = document.getElementById("total");
-const title = document.querySelector("h1");
 const content = document.getElementById("content");
-const controls = document.getElementById("controls");
+const consoleElement = document.getElementById("console");
 startButton === null || startButton === void 0 ? void 0 : startButton.addEventListener("click", () => {
     start();
 });
@@ -54,7 +53,6 @@ stopButton === null || stopButton === void 0 ? void 0 : stopButton.addEventListe
 transcriptElement === null || transcriptElement === void 0 ? void 0 : transcriptElement.addEventListener("input", event => {
     if (event.target instanceof HTMLTextAreaElement) {
         transcript = event.target.value;
-        console.log(event.target.value);
         try {
             setResult(eval(transcript));
         }
@@ -64,7 +62,6 @@ transcriptElement === null || transcriptElement === void 0 ? void 0 : transcript
     }
 });
 function formatText(text) {
-    console.log("before formatting : ", text);
     let parts = text.split(" ");
     return parts.map((part, pos) => {
         if (part === next) {
@@ -84,6 +81,9 @@ recognition.onresult = (event) => {
         else {
             interimTranscript += transcriptChunk;
         }
+    }
+    if (finalTranscript) {
+        addConsole(finalTranscript);
     }
     try {
         const partsForTotal = finalTranscript ? finalTranscript.split(specialWord) : interimTranscript.split(specialWord);
@@ -131,10 +131,14 @@ recognition.onend = () => {
     }
 };
 function start() {
-    if (content)
+    if (content) {
         content.classList.remove("collapsed");
-    if (stopButton)
+        content.classList.add("collapsable");
+    }
+    if (stopButton) {
         stopButton.classList.remove("collapsed");
+        stopButton.classList.add("collapsable");
+    }
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream) => {
         setStatusElement("Transcription en cours ...");
@@ -146,16 +150,20 @@ function start() {
     });
 }
 function stop() {
-    if (stopButton)
-        stopButton.classList.add("collapsed");
-    if (content)
+    if (content) {
         content.classList.add("collapsed");
+        content.classList.remove("collapsable");
+    }
+    if (stopButton) {
+        stopButton.classList.add("collapsed");
+        stopButton.classList.remove("collapsable");
+    }
     clearElements();
     setStatusElement("Appuie sur Calculer pour lancer le calcul");
 }
 function formatPart(part) {
     var _a;
-    part = part.replace(",", ".");
+    part = part.replace(",", ".").replace(" et demi", ".5");
     if (isNaN(Number(part))) {
         return (_a = motsVersChiffres[part]) !== null && _a !== void 0 ? _a : "";
     }
@@ -199,4 +207,9 @@ function setTempStatusElement(newValue) {
     setTimeout(() => {
         setStatusElement("Transcription en cours ...");
     }, 2000);
+}
+function addConsole(text) {
+    if (consoleElement) {
+        consoleElement.innerText += text;
+    }
 }

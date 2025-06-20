@@ -20,7 +20,6 @@
         --secondary-color-light: #fde6ec;
 }
 
-
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -32,43 +31,23 @@
     }
 }
 
-@keyframes fadeOutDown {
-    from {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateY(1rem);
-    }
-}
-
 html {
     font-family: 'Cloudy', sans-serif;
     background-color: var(--secondary-color);
     color: var(--primary-color);
-
+    height: 100vh;
 }
 
 body {
     box-sizing: border-box;
-}
-
-main {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 97vh;
     width: 30rem;
     max-width: 100%;
     margin: 0 auto;
-}
-
-main > * {
-    max-height: 1000px;
-    opacity: 1;
-    transition: all 1s ease;
+    height: 100%;
 }
 
 h1 {
@@ -82,10 +61,15 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem 0;
     justify-content: space-between;
     gap: 1rem;
     flex-grow:1;
+}
+
+#result:empty,
+#total:empty {
+    opacity: 0;
+    transform: translateY(-1rem);
 }
 
 #transcript,
@@ -94,18 +78,18 @@ h1 {
     font-family: monospace;
     text-align: center;
     margin: 0.5rem 0;
-    animation: fadeInUp 0.5s ease;
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 1s ease;
 }
 
 #transcript {
     color: var(--primary-color);
     background-color: inherit;
     border: none;
-    border-radius: 2rem;
+    border-radius: 1.4rem;
     font-size: 1.4rem;
-    text-align: center;
     align-content: end;
-    font-family: monospace;
     padding: 0.5rem 1rem;
     resize: none;
     overflow: hidden;
@@ -123,6 +107,7 @@ h1 {
 #result {
     font-weight: bold;
     font-size: 1.5rem;
+    min-height: 1.8rem
 }
 
 #total {
@@ -180,10 +165,6 @@ button {
     border-radius: 3rem;
     margin-top: 1rem;
     max-width: 18rem;
-    animation: fadeInUp 1s ease;
-    max-height: 1000px;
-    opacity: 1;
-    transition: all .5s ease;
 }
 
 #status {
@@ -193,6 +174,16 @@ button {
 }
 
 .collapsed {
-    max-height: 0 !important;
-    opacity: 0 !important;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: all 1s ease;
+    transition-delay: -0.4s
+}
+
+.collapsable {
+    opacity: 1;
+    max-height: 1000px;
+    transition: opacity 1s ease, max-height 1s ease;
 }

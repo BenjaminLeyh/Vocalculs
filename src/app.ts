@@ -42,9 +42,8 @@ const transcriptElement = document.getElementById("transcript") as HTMLTextAreaE
 const resultElement = document.getElementById("result")
 const statusElement = document.getElementById("status");
 const totalElement = document.getElementById("total");
-const title = document.querySelector("h1");
 const content = document.getElementById("content");
-const controls = document.getElementById("controls");
+const consoleElement = document.getElementById("console");
 
 startButton?.addEventListener("click", () => {
     start();
@@ -57,7 +56,6 @@ stopButton?.addEventListener("click", () => {
 transcriptElement?.addEventListener("input", event => {
     if (event.target instanceof HTMLTextAreaElement) {
         transcript = event.target.value;
-        console.log(event.target.value);
         try {
             setResult(eval(transcript));
         } catch {
@@ -69,7 +67,6 @@ transcriptElement?.addEventListener("input", event => {
 
 
 function formatText(text: any) {
-    console.log("before formatting : ",text)
     let parts = text.split(" ");
     return parts.map((part : string, pos: number) => {
         if(part === next) {
@@ -94,6 +91,10 @@ recognition.onresult = (event: {
             interimTranscript += transcriptChunk;
         }
 
+    }
+
+    if(finalTranscript) {
+        addConsole(finalTranscript);
     }
 
     try {
@@ -146,8 +147,14 @@ recognition.onend = () => {
 };
 
 function start(): void {
-    if (content) content.classList.remove("collapsed")
-    if (stopButton) stopButton.classList.remove("collapsed");
+    if (content) {
+        content.classList.remove("collapsed")
+        content.classList.add("collapsable")
+    }
+    if (stopButton) {
+        stopButton.classList.remove("collapsed");
+        stopButton.classList.add("collapsable");
+    }
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream: MediaStream) => {
             setStatusElement("Transcription en cours ...");
@@ -160,15 +167,21 @@ function start(): void {
 }
 
 function stop(): void {
-    if (stopButton) stopButton.classList.add("collapsed");
-    if (content) content.classList.add("collapsed")
+    if (content) {
+        content.classList.add("collapsed")
+        content.classList.remove("collapsable")
+    }
+    if (stopButton) {
+        stopButton.classList.add("collapsed");
+        stopButton.classList.remove("collapsable");
+    }
 
     clearElements()
     setStatusElement("Appuie sur Calculer pour lancer le calcul")
 }
 
 function formatPart(part: string): string {
-    part = part.replace(",", ".")
+    part = part.replace(",", ".").replace(" et demi", ".5")
     if(isNaN(Number(part))) {
         return motsVersChiffres[part] ?? "";
     }
@@ -220,4 +233,10 @@ function setTempStatusElement(newValue : string) {
     setTimeout(() => {
         setStatusElement("Transcription en cours ...");
     }, 2000)
+}
+
+function addConsole(text: string) {
+    if(consoleElement) {
+        consoleElement.innerText += text;
+    }
 }
