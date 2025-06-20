@@ -44,6 +44,7 @@ const statusElement = document.getElementById("status");
 const totalElement = document.getElementById("total");
 const content = document.getElementById("content");
 const consoleElement = document.getElementById("console");
+const title = document.querySelector("h1");
 startButton === null || startButton === void 0 ? void 0 : startButton.addEventListener("click", () => {
     start();
 });
@@ -81,9 +82,6 @@ recognition.onresult = (event) => {
         else {
             interimTranscript += transcriptChunk;
         }
-    }
-    if (finalTranscript) {
-        addConsole(finalTranscript);
     }
     try {
         const partsForTotal = finalTranscript ? finalTranscript.split(specialWord) : interimTranscript.split(specialWord);
@@ -131,14 +129,7 @@ recognition.onend = () => {
     }
 };
 function start() {
-    if (content) {
-        content.classList.remove("collapsed");
-        content.classList.add("collapsable");
-    }
-    if (stopButton) {
-        stopButton.classList.remove("collapsed");
-        stopButton.classList.add("collapsable");
-    }
+    startingTransition();
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream) => {
         setStatusElement("Transcription en cours ...");
@@ -150,15 +141,8 @@ function start() {
     });
 }
 function stop() {
-    if (content) {
-        content.classList.add("collapsed");
-        content.classList.remove("collapsable");
-    }
-    if (stopButton) {
-        stopButton.classList.add("collapsed");
-        stopButton.classList.remove("collapsable");
-    }
     clearElements();
+    stoppingTransition();
     setStatusElement("Appuie sur Calculer pour lancer le calcul");
 }
 function formatPart(part) {
@@ -211,5 +195,37 @@ function setTempStatusElement(newValue) {
 function addConsole(text) {
     if (consoleElement) {
         consoleElement.innerText += text;
+    }
+}
+function startingTransition() {
+    if (content) {
+        content.classList.remove("collapsed");
+        content.classList.add("collapsable");
+    }
+    if (stopButton) {
+        stopButton.classList.remove("collapsed");
+        stopButton.classList.add("collapsable");
+    }
+    if (startButton) {
+        startButton.innerText = "Nouveau";
+    }
+    if (title) {
+        title.classList.add("smallTitle");
+    }
+}
+function stoppingTransition() {
+    if (content) {
+        content.classList.add("collapsed");
+        content.classList.remove("collapsable");
+    }
+    if (stopButton) {
+        stopButton.classList.add("collapsed");
+        stopButton.classList.remove("collapsable");
+    }
+    if (startButton) {
+        startButton.innerText = "Calculer";
+    }
+    if (title) {
+        title.classList.remove("smallTitle");
     }
 }
