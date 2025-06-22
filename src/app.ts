@@ -105,7 +105,7 @@ recognition.onresult = (event: {
             try {
                 tempResult = eval(`${result || ""} ${formattedText}`);
                 setResultElement(tempResult);
-                setTranscriptElement(transcript + formattedText);
+                setTranscriptElement((transcript + formattedText).trim() + " ");
             } catch (error) {}
         }
 
@@ -157,6 +157,7 @@ function start(): void {
 }
 
 function stop(): void {
+    stopping = true;
     clearElements()
     stoppingTransition()
     setStatusElement("Appuie sur Calculer pour lancer le calcul")
