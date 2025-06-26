@@ -100,6 +100,10 @@ recognition.onresult = (event: {
     }
 
     try {
+        interimTranscript.replace(" et demi", ".5");
+        finalTranscript.replace(" et demi", ".5");
+        interimTranscript.replace(" et demie", ".5");
+        finalTranscript.replace(" et demie", ".5");
         const partsForTotal = finalTranscript ? finalTranscript.split(specialWord) : interimTranscript.split(specialWord);
         const formattedText = formatText(partsForTotal[0]) + " ";
         if(finalTranscript) {
@@ -169,7 +173,7 @@ function stop(): void {
 }
 
 function formatPart(part: string): string {
-    part = part.replace(",", ".").replace(" et demi", ".5")
+    part = part.replace(",", ".")
     if(isNaN(Number(part))) {
         return motsVersChiffres[part] ?? "";
     }

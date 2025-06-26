@@ -88,6 +88,10 @@ recognition.onresult = (event) => {
         addConsole(finalTranscript);
     }
     try {
+        interimTranscript.replace(" et demi", ".5");
+        finalTranscript.replace(" et demi", ".5");
+        interimTranscript.replace(" et demie", ".5");
+        finalTranscript.replace(" et demie", ".5");
         const partsForTotal = finalTranscript ? finalTranscript.split(specialWord) : interimTranscript.split(specialWord);
         const formattedText = formatText(partsForTotal[0]) + " ";
         if (finalTranscript) {
@@ -152,7 +156,7 @@ function stop() {
 }
 function formatPart(part) {
     var _a;
-    part = part.replace(",", ".").replace(" et demi", ".5");
+    part = part.replace(",", ".");
     if (isNaN(Number(part))) {
         return (_a = motsVersChiffres[part]) !== null && _a !== void 0 ? _a : "";
     }
