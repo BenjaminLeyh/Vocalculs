@@ -94,7 +94,10 @@ recognition.onresult = (event: {
 
     }
 
-    addConsole(finalTranscript)
+    if(finalTranscript) {
+        console.log("final transcript", finalTranscript);
+        addConsole(finalTranscript)
+    }
 
     try {
         const partsForTotal = finalTranscript ? finalTranscript.split(specialWord) : interimTranscript.split(specialWord);

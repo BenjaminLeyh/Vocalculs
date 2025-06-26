@@ -83,7 +83,10 @@ recognition.onresult = (event) => {
             interimTranscript += transcriptChunk;
         }
     }
-    addConsole(finalTranscript);
+    if (finalTranscript) {
+        console.log("final transcript", finalTranscript);
+        addConsole(finalTranscript);
+    }
     try {
         const partsForTotal = finalTranscript ? finalTranscript.split(specialWord) : interimTranscript.split(specialWord);
         const formattedText = formatText(partsForTotal[0]) + " ";
