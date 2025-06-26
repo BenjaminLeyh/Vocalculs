@@ -83,6 +83,7 @@ recognition.onresult = (event) => {
             interimTranscript += transcriptChunk;
         }
     }
+    addConsole(finalTranscript);
     try {
         const partsForTotal = finalTranscript ? finalTranscript.split(specialWord) : interimTranscript.split(specialWord);
         const formattedText = formatText(partsForTotal[0]) + " ";
@@ -195,7 +196,7 @@ function setTempStatusElement(newValue) {
 }
 function addConsole(text) {
     if (consoleElement) {
-        consoleElement.innerText += text;
+        consoleElement.innerText = text;
     }
 }
 function startingTransition() {
